@@ -1,0 +1,23 @@
+{
+  "name": "playwright_proj1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eugen-automation/playwright_proj1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/eugen-automation/playwright_proj1/issues"
+  },
+  "homepage": "https://github.com/eugen-automation/playwright_proj1#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "@types/node": "^24.1.0"
+  }
+}
