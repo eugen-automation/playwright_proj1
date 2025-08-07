@@ -3,7 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:headed:chrome": "npx playwright test --headed --project=chromium",
+    "test:headed:firefox": "npx playwright test --headed --project=firefox",
+    "test:headed:webkit": "npx playwright test --headed --project=webkit"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eugen-automation/playwright_proj1.git"

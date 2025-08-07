@@ -1,15 +1,36 @@
-import { Page } from '@playwright/test';
+import { BasePage } from './BasePage';
+import { HeaderComponent } from '../components/HeaderComponent';
+import { Page, Locator } from '@playwright/test';
 
-export class HomePage {
-  readonly page: Page;
+export class HomePage extends BasePage {
+  readonly header: HeaderComponent;
+  readonly heroSection: Locator;
+  readonly featuredProducts: Locator;
+  readonly newsletterSignup: Locator;
+
   constructor(page: Page) {
-    this.page = page;
+    super(page);
+    this.header = new HeaderComponent(page);
+    this.heroSection = page.locator('.hero-section');
+    this.featuredProducts = page.locator('.featured-products');
+    this.newsletterSignup = page.locator('#newsletter-form');
   }
+
   async goto() {
-    await this.page.goto('https://www.emag.ro/');
+    await super.goto('/');
+    await this.waitForPageLoad();
   }
-  async search(product: string) {
-    await this.page.fill('input[placeholder="Caută produse, branduri și categorii"]', product);
-    await this.page.press('input[placeholder="Caută produse, branduri și categorii"]', 'Enter');
+
+  async isHeroVisible(): Promise<boolean> {
+    return await this.heroSection.isVisible();
+  }
+
+  async getFeaturedProductsCount(): Promise<number> {
+    return await this.featuredProducts.locator('.product-card').count();
+  }
+
+  async subscribeToNewsletter(email: string) {
+    await this.newsletterSignup.locator('input[type="email"]').fill(email);
+    await this.newsletterSignup.locator('button[type="submit"]').click();
   }
 }
