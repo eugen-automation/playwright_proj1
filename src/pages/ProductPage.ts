@@ -1,6 +1,6 @@
-import { BasePage } from '../core/BasePage';
+import { BasePage } from './BasePage';
 import { Page } from '@playwright/test';
-import { ProductCardComponent } from '../components/ProductCardComponent.ts';
+import { ProductCardComponent } from '../components/ProductCardComponent';
 
 export class ProductPage extends BasePage {
   readonly productCard: ProductCardComponent;
