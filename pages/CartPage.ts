@@ -1,5 +1,5 @@
-import { BasePage } from './BasePage';
-import { HeaderComponent } from '../components/HeaderComponent';
+import { BasePage } from './BasePage.ts';
+import { HeaderComponent } from '../components/HeaderComponent.ts';
 import { Page, Locator } from '@playwright/test';
 
 export class CartPage extends BasePage {

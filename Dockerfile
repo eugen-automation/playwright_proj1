@@ -1,8 +1,9 @@
-# Dockerfile for Playwright + TypeScript
-FROM mcr.microsoft.com/playwright:v1.44.0-jammy
+# Dockerfile for running Playwright tests with Allure and reporting support
+FROM mcr.microsoft.com/playwright:v1.54.1-jammy
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm ci || npm install
+RUN npm install
 COPY . .
-RUN npx playwright install --with-deps
-CMD ["npx", "playwright", "test"]
+
+# Run tests with Allure reporter and generate the report at the end
+CMD npm run test:allure && npm run allure:generate
