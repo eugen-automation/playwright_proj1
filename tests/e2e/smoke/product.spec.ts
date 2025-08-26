@@ -1,12 +1,15 @@
 import { test, expect } from '@playwright/test';
-import { ProductPage } from '../../../src/pages/ProductPage';
+import { ProductDetailsPage } from '../../../src/pages/ProductDetailsPage';
 import logger from '../../../src/utils/helpers/logger';
 
 test.describe('Product Page', () => {
   test('should load product details', async ({ page }) => {
-    const productPage = new ProductPage(page);
-    logger.info('Navigating to product page');
-    await productPage.goto('nopcommerce-demo-product');
-    await expect(page.locator('.product-essential')).toBeVisible();
+    const productPage = new ProductDetailsPage(page);
+
+    logger.info('Navigating to specific mobile phone product details page');
+    await productPage.goto('samsung-galaxy-s24-256gb');
+    
+    await expect(productPage.productName).toBeVisible();
+    await expect(productPage.productShortDescription).toBeVisible();
   });
 });

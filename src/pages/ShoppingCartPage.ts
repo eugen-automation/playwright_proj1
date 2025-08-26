@@ -1,8 +1,9 @@
-import { BasePage } from './BasePage';
-import { HeaderComponent } from '../components/common/HeaderComponent';
 import { Page, Locator } from '@playwright/test';
+import { BasePage } from './core/BasePage';
+import { HeaderComponent } from '../components/common/HeaderComponent';
 
-export class CartPage extends BasePage {
+
+export class ShoppingCartPage extends BasePage {
   readonly header: HeaderComponent;
   readonly cartItems: Locator;
   readonly totalPrice: Locator;

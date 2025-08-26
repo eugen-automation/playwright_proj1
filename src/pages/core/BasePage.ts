@@ -1,5 +1,6 @@
 import { Page } from '@playwright/test';
 
+
 export class BasePage {
   protected readonly page: Page;
 
@@ -12,6 +13,7 @@ export class BasePage {
   }
 
   async waitForPageLoad() {
-    await this.page.waitForLoadState('networkidle');
+     // Basic DOM
+    await this.page.waitForLoadState('domcontentloaded');
   }
 }
