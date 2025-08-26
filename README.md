@@ -1,6 +1,6 @@
-# Playwright Automation Framework for nopCommerce
+# Playwright Automation Framework for nopCommerce website
 
-This project is a modular and scalable framework for E2E automation testing using Playwright, Page Object Model (POM), ComponentPage, Allure, logger, Docker, and GitHub Actions.
+This project is a modular and scalable framework for E2E automation testing using Page Object Model (POM), ComponentPage, Allure, logger, Docker, and GitHub Actions.
 
 ## Main Features
 - **Page Object Model** (POM) and PageFactory for clear and reusable structure
@@ -13,7 +13,7 @@ This project is a modular and scalable framework for E2E automation testing usin
 
 ## Installation
 ```bash
-npm install
+npm install --with-deps
 ```
 
 ## Run tests
