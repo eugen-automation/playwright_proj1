@@ -3,10 +3,10 @@
 This project is a modular and scalable framework for E2E automation testing using Page Object Model (POM), ComponentPage, Allure, logger, Docker, and GitHub Actions.
 
 ## Main Features
-- **Page Object Model** (POM) and PageFactory for clear and reusable structure
+- **Page Object Model** and PageFactory for clear and reusable structure
 - **ComponentPage** for reusable UI components
 - **Allure** for advanced reporting
-- **Logger** based on Node.js
+- **Logger**  based on Node.js
 - **Docker** for containerized execution
 - **GitHub Actions** for CI
 - Multi-browser support (Chromium, Firefox, Webkit)

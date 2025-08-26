@@ -12,6 +12,7 @@ export class BasePage {
   }
 
   async waitForPageLoad() {
-    await this.page.waitForLoadState('networkidle');
+     // Basic DOM
+    await this.page.waitForLoadState('domcontentloaded');
   }
 }
