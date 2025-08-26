@@ -31,19 +31,6 @@ docker build -t playwright-nopcommerce .
 docker run --rm playwright-nopcommerce
 ```
 
-## Project structure
-- `src/core` – base classes (e.g. BasePage)
-- `src/pages` – main pages (e.g. HomePage, ProductPage)
-- `src/components` – UI components (e.g. HeaderComponent)
-- `src/factory` – PageFactory
-- `src/utils` – utilities (e.g. logger)
-- `tests` – E2E tests
-
 ## CI Configuration
 See `.github/workflows/ci.yml` for the GitHub Actions pipeline.
-
-## Customization
-You can extend the framework for any site, not just nopCommerce, by adding new pages and components in `src/pages` and `src/components`.
-
----
 
