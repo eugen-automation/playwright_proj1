@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { HomePage } from '../src/pages/HomePage';
-import logger from '../src/utils/logger';
+import { HomePage } from '../../../src/pages/HomePage';
+import logger from '../../../src/utils/helpers/logger';
 
 test.describe('Home Page', () => {
   test('should load and display header', async ({ page }) => {
@@ -15,6 +15,7 @@ test.describe('Home Page', () => {
     logger.info('Navigating to home page');
     await homePage.goto();
 
+    logger.info('Checking upper-header elements');
     const elementsToCheck = {
       dropdown: homePage.header.currencyDropDown,
       register: homePage.header.registerLink,
@@ -34,6 +35,7 @@ test.describe('Home Page', () => {
     logger.info('Navigating to home page');
     await homePage.goto();
 
+    logger.info('Checking lower-header elements');
     const elementsToCheck = {
       logo: homePage.header.logo,
       searchInput: homePage.header.searchInput,
@@ -51,6 +53,7 @@ test.describe('Home Page', () => {
     logger.info('Navigating to home page');
     await homePage.goto();
 
+    logger.info('Checking menu-header elements');
     const elementsToCheck = {
       menuContainer: homePage.header.menuContainer,
       computers: homePage.header.menuComputersItem,

@@ -1,6 +1,6 @@
 import { BasePage } from './BasePage';
 import { Page } from '@playwright/test';
-import { HeaderComponent } from '../components/HeaderComponent';
+import { HeaderComponent } from '../components/common/HeaderComponent';
 
 export class HomePage extends BasePage {
   readonly header: HeaderComponent;

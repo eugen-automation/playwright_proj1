@@ -1,6 +1,6 @@
 import { BasePage } from './BasePage';
 import { Page } from '@playwright/test';
-import { ProductCardComponent } from '../components/ProductCardComponent';
+import { ProductCardComponent } from '../components/common/ProductCardComponent';
 
 export class ProductPage extends BasePage {
   readonly productCard: ProductCardComponent;

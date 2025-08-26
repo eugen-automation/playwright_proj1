@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { ProductPage } from '../src/pages/ProductPage';
-import logger from '../src/utils/logger';
+import { ProductPage } from '../../../src/pages/ProductPage';
+import logger from '../../../src/utils/helpers/logger';
 
 test.describe('Product Page', () => {
   test('should load product details', async ({ page }) => {
