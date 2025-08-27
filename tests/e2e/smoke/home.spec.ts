@@ -30,7 +30,7 @@ test.describe('Home Page', () => {
     }
   });
 
-    test('should display lower-header elements', async ({ page }) => {
+  test('should display lower-header elements', async ({ page }) => {
     const homePage = new HomePage(page);
     logger.info('Navigating to home page');
     await homePage.goto();
@@ -48,7 +48,7 @@ test.describe('Home Page', () => {
     }
   });
 
-      test('should display menu-header elements', async ({ page }) => {
+  test('should display menu-header elements', async ({ page }) => {
     const homePage = new HomePage(page);
     logger.info('Navigating to home page');
     await homePage.goto();

@@ -2,16 +2,8 @@ import { faker } from '@faker-js/faker';
 import { Page, Locator } from '@playwright/test';
 import { BasePage } from './core/BasePage';
 import { saveUserCredentials } from '../utils/helpers/jsonSaveUserCredentials';
+import { IAuthCredentials, IRegistrationResult } from '../types/interfaces/registration.interface';
 
-interface UserCredentials {
-    email: string;
-    password: string;
-}
-
-interface RegistrationResult {
-    status: boolean;
-    credentials: UserCredentials;
-}
 
 export class RegistrationPage extends BasePage {
     readonly pageTitle: Locator;
@@ -57,7 +49,7 @@ export class RegistrationPage extends BasePage {
      * Registers a random user.
      * @returns A promise that resolves to an object containing the registration status and user credentials.
      */
-    async registerRandomUser(): Promise<RegistrationResult> {
+    async registerRandomUser(): Promise<IRegistrationResult> {
         // generate random user data
         const randomGender = faker.person.gender();
         const randomFirstName = faker.person.firstName();
@@ -110,7 +102,7 @@ export class RegistrationPage extends BasePage {
         password: string,
         gender?: 'male' | 'female',
         companyName?: string,
-        newsletter: boolean = true): Promise<RegistrationResult> {
+        newsletter: boolean = true): Promise<IRegistrationResult> {
 
 
         // Fill required form fields

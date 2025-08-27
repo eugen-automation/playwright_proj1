@@ -10,7 +10,7 @@ test.describe('Search Functionality', () => {
     await homePage.goto();
     await homePage.header.search('laptop');
     const count = await page.locator('.product-item').count();
-    
+
     console.log(`${count} items were found on the page`);
     expect(count).toBeGreaterThan(0);
   });

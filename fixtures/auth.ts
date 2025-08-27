@@ -9,7 +9,7 @@ type AuthUser = {
 export const test = base.extend<{
   registeredUser: AuthUser;
 }>({
-  registeredUser: async ({}, use) => {
+  registeredUser: async ({ }, use) => {
     await use(userData.registeredUser);
   }
 });

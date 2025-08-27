@@ -8,7 +8,7 @@ test.describe('Product Page', () => {
 
     logger.info('Navigating to specific mobile phone product details page');
     await productPage.goto('samsung-galaxy-s24-256gb');
-    
+
     await expect(productPage.productName).toBeVisible();
     await expect(productPage.productShortDescription).toBeVisible();
   });

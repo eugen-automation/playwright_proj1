@@ -9,11 +9,11 @@ test.describe('Cart Functionality', () => {
     const homePage = new HomePage(page);
     logger.info('Navigating to Software products page');
     await productPage.goto('software');
-    
+
 
     page.getByText('The product has been added to')
 
-    
+
     await productPage.productCard.addToCart();
     await expect(homePage.header.cartButton).not.toHaveText('0');
     await expect(page.getByText('The product has been added to')).toBeVisible();
