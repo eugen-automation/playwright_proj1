@@ -11,6 +11,9 @@ export class HomePage extends BasePage {
     this.header = new HeaderComponent(page);
   }
 
+  /**
+   * Navigates to the home page.
+   */
   async goto() {
     await super.goto('/');
     await this.waitForPageLoad();

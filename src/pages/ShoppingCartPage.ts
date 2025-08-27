@@ -19,19 +19,34 @@ export class ShoppingCartPage extends BasePage {
     this.continueShoppingBtn = page.locator('button[data-testid="continue-shopping"]');
   }
 
+  /**
+   * Navigates to the shopping cart page.
+   */
   async goto() {
     await super.goto('/cart');
-    await this.waitForPageLoad();
+    await super.waitForPageLoad();
   }
 
+  /**
+   * Gets the count of items in the shopping cart.
+   * @returns The number of items in the cart.
+   */
   async getCartItemsCount(): Promise<number> {
     return await this.cartItems.locator('.cart-item').count();
   }
 
+  /**
+   * Gets the total price of items in the shopping cart.
+   * @returns The total price as a string.
+   */
   async getTotalPrice(): Promise<string> {
     return await this.totalPrice.textContent() || '';
   }
 
+  /**
+   * Removes an item from the shopping cart.
+   * @param itemIndex The index of the item to remove.
+   */
   async removeItem(itemIndex: number) {
     await this.cartItems
       .locator('.cart-item')
@@ -40,6 +55,11 @@ export class ShoppingCartPage extends BasePage {
       .click();
   }
 
+  /**
+   * Updates the quantity of an item in the shopping cart.
+   * @param itemIndex The index of the item to update.
+   * @param quantity The new quantity.
+   */
   async updateQuantity(itemIndex: number, quantity: number) {
     const quantityInput = this.cartItems
       .locator('.cart-item')
@@ -50,6 +70,9 @@ export class ShoppingCartPage extends BasePage {
     await quantityInput.press('Tab'); // Trigger change event
   }
 
+  /**
+   * Proceeds to the checkout page.
+   */
   async proceedToCheckout() {
     await this.checkoutBtn.click();
   }

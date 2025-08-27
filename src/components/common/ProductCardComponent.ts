@@ -8,7 +8,10 @@ export class ProductCardComponent {
     this.page = page;
     this.addToCartButton = page.locator('.product-box-add-to-cart-button');
   }
-
+  
+  /**
+   * Adds the product to the shopping cart.
+   */
   async addToCart() {
     await this.addToCartButton.first().click();
   }

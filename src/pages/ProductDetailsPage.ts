@@ -18,6 +18,6 @@ export class ProductDetailsPage extends BasePage {
 
   // async goto(productId: string) {
   //   await super.goto(`/product/${productId}`);
-  //   await this.waitForPageLoad();
+  //   await super.waitForPageLoad();
   // }
 }
