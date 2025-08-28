@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { Page, Locator } from '@playwright/test';
 import { BasePage } from './core/BasePage';
 import { saveUserCredentials } from '../utils/helpers/jsonSaveUserCredentials';
-import { IAuthCredentials, IRegistrationResult } from '../types/interfaces/registration.interface';
+import { IRegistrationResult } from '../types/interfaces/registration.interface';
 
 
 export class RegistrationPage extends BasePage {
@@ -50,38 +50,54 @@ export class RegistrationPage extends BasePage {
      * @returns A promise that resolves to an object containing the registration status and user credentials.
      */
     async registerRandomUser(): Promise<IRegistrationResult> {
-        // generate random user data
-        const randomGender = faker.person.gender();
-        const randomFirstName = faker.person.firstName();
-        const randomLastName = faker.person.lastName();
-        const randomEmail = faker.internet.email({ firstName: randomFirstName, lastName: randomLastName });
-        const randomCompanyName = faker.company.name();
-        const randomPassword = faker.internet.password({ length: 10 });
 
-        // Fill required form fields
-        await this.firstNameInput.fill(randomFirstName);
-        await this.lastNameInput.fill(randomLastName);
-        await this.emailInput.fill(randomEmail);
-        await this.passwordInput.fill(randomPassword);
-        await this.confirmPasswordInput.fill(randomPassword);
+        try {
+            // generate random user data
+            const randomGender = faker.person.sex();
+            console.log(`Generated random gender: ${randomGender}`);
+            const randomFirstName = faker.person.firstName();
+            console.log(`Generated random first name: ${randomFirstName}`);
+            const randomLastName = faker.person.lastName();
+            console.log(`Generated random last name: ${randomLastName}`);
+            const randomEmail = faker.internet.email({ firstName: randomFirstName, lastName: randomLastName });
+            console.log(`Generated random email: ${randomEmail}`);
+            const randomCompanyName = faker.company.name();
+            console.log(`Generated random company name: ${randomCompanyName}`);
+            const randomPassword = faker.internet.password({ length: 10 });
+            console.log(`Generated random password: ${randomPassword}`);
 
-        // fill optional fields
-        randomGender === 'male' ? await this.maleRadio.check() : await this.femaleRadio.check();
-        await this.companyNameInput.fill(randomCompanyName);
-        if (!faker.datatype.boolean()) {
-            await this.newsletterCheckbox.uncheck();
+            // Fill required form fields
+            await this.firstNameInput.fill(randomFirstName);
+            await this.lastNameInput.fill(randomLastName);
+            await this.emailInput.fill(randomEmail);
+            await this.passwordInput.fill(randomPassword);
+            await this.confirmPasswordInput.fill(randomPassword);
+
+            // fill optional fields
+            randomGender.toLocaleLowerCase() === 'male' ? await this.maleRadio.check() : await this.femaleRadio.check();
+            await this.companyNameInput.fill(randomCompanyName);
+            if (!faker.datatype.boolean()) {
+                await this.newsletterCheckbox.uncheck();
+            }
+            // submit form
+            await this.submitButton.click();
+
+            const operationResult = await this.successMessage.isVisible({ timeout: 20000 });
+            // if registration succeded, then save credentials into json file
+            if (operationResult) {
+                // save registered credentials into registered-user.json
+                saveUserCredentials({ email: randomEmail, password: randomPassword });
+            }
+
+            return { status: operationResult, credentials: { email: randomEmail, password: randomPassword } };
+        } catch (error) {
+            console.error('Registration failed:', error);
+            return {
+                status: false,
+                credentials: null,
+                error: error
+            };
         }
-        // submit form
-        await this.submitButton.click();
-
-        const operationResult = await this.successMessage.isVisible();
-        // if registration succeded, then save credentials into json file
-        if (operationResult) {
-            // save registered credentials into registered-user.json
-            saveUserCredentials({ email: randomEmail, password: randomPassword });
-        }
-
-        return { status: operationResult, credentials: { email: randomEmail, password: randomPassword } };
     }
 
     /**
@@ -104,37 +120,46 @@ export class RegistrationPage extends BasePage {
         companyName?: string,
         newsletter: boolean = true): Promise<IRegistrationResult> {
 
+        try {
+            // Fill required form fields
+            await Promise.all([
+                this.firstNameInput.fill(firstName),
+                this.lastNameInput.fill(lastName),
+                this.emailInput.fill(email),
+                this.passwordInput.fill(password),
+                this.confirmPasswordInput.fill(password)
+            ]);
 
-        // Fill required form fields
-        await Promise.all([
-            this.firstNameInput.fill(firstName),
-            this.lastNameInput.fill(lastName),
-            this.emailInput.fill(email),
-            this.passwordInput.fill(password),
-            this.confirmPasswordInput.fill(password)
-        ]);
+            // fill in optional fields
+            if (gender) {
+                gender === 'male' ? await this.maleRadio.check() : await this.femaleRadio.check()
+            }
+            if (companyName) {
+                await this.companyNameInput.fill(companyName);
+            }
+            if (!newsletter) {
+                await this.newsletterCheckbox.uncheck();
+            }
 
-        // fill in optional fields
-        if (gender) {
-            gender === 'male' ? await this.maleRadio.check() : await this.femaleRadio.check()
+            // submit the form
+            await this.submitButton.click();
+
+            const operationResult = await this.successMessage.isVisible();
+            // if registration succeded, then save credentials into json file
+            if (operationResult) {
+                // save registered credentials into registered-user.json
+                saveUserCredentials({ email: email, password: password });
+            }
+
+            return { status: operationResult, credentials: { email: email, password: password } };
+
+        } catch (error) {
+            console.error('Registration failed:', error);
+            return {
+                status: false,
+                credentials: null,
+                error: error
+            };
         }
-        if (companyName) {
-            await this.companyNameInput.fill(companyName);
-        }
-        if (!newsletter) {
-            await this.newsletterCheckbox.uncheck();
-        }
-
-        // submit the form
-        await this.submitButton.click();
-
-        const operationResult = await this.successMessage.isVisible();
-        // if registration succeded, then save credentials into json file
-        if (operationResult) {
-            // save registered credentials into registered-user.json
-            saveUserCredentials({ email: email, password: password });
-        }
-
-        return { status: operationResult, credentials: { email: email, password: password } };
     }
-}
+}``

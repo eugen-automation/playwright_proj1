@@ -5,5 +5,6 @@ export interface IAuthCredentials {
 
 export interface IRegistrationResult {
     status: boolean;
-    credentials: IAuthCredentials;
+    credentials: IAuthCredentials | null;
+    error?: string | unknown;
 }
