@@ -21,14 +21,15 @@ npm install --with-deps
 - Headed (UI visible): `npm run test:headed`
 - With Allure: `npm run test:allure`
 
-## Allure Reporting
-- Generate report: `npm run allure:generate`
-- Serve report: `npm run allure:serve`
+## Allure Reporting - not yet
+##- Generate report: `npm run allure:generate`
+##- Serve report: `npm run allure:serve`
 
-## Run in Docker
-```bash
-docker build -t playwright-nopcommerce .
-docker run --rm playwright-nopcommerce
+## Run in Docker - not yet
+```
+##bash
+##docker build -t playwright-nopcommerce .
+##docker run --rm playwright-nopcommerce
 ```
 
 ## CI Configuration
