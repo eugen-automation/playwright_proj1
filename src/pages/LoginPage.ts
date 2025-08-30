@@ -8,7 +8,6 @@ export class LoginPage extends BasePage {
     readonly rememberMeCheckbox: Locator;
     readonly forgotPasswordLink: Locator;
     readonly loginButton: Locator;
-    readonly logoutLink: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -17,8 +16,7 @@ export class LoginPage extends BasePage {
         this.rememberMeCheckbox = this.page.getByRole('checkbox', { name: 'Remember me?' });
         this.forgotPasswordLink = this.page.getByRole('link', { name: 'Forgot password?' });
         this.loginButton = this.page.getByRole('button', { name: 'Log in' })
-        this.logoutLink = this.page.getByRole('link', { name: 'Log out' });
-    }
+       }
 
     /**
      * Logs in a user with the provided email and password
@@ -37,15 +35,6 @@ export class LoginPage extends BasePage {
     async goto(): Promise<void> {
         await super.goto('/login');
         await super.waitForPageLoad();
-    }
-
-    /**
-     * Checks if the user is logged in
-     * @returns A promise that resolves to a boolean indicating whether the user is logged in
-     */
-    async isLoggedIn(): Promise<boolean> {
-        // Check if the user is logged in by verifying the presence of a logout button 
-        return await this.logoutLink.isVisible();
     }
 
 }

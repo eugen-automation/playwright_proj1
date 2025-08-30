@@ -7,12 +7,14 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: [
-    ['line'],
-    ['allure-playwright']
+   ['list'], 
+  ['allure-playwright']
+ 
+   
   ],
   use: {
     baseURL: 'https://demo.nopcommerce.com',
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },

@@ -1,17 +1,18 @@
-import { test, expect } from '@playwright/test';
-import { HomePage } from '../../../src/pages/HomePage';
+import { expect } from '@playwright/test';
+import { test } from '../../../fixtures/fixtures';
 import logger from '../../../src/utils/helpers/logger';
 
 test.describe('Home Page', () => {
-  test('should load and display header', async ({ page }) => {
-    const homePage = new HomePage(page);
+
+  test('should load and display header', async ({ homePage }) => {
+    
     logger.info('Navigating to home page');
     await homePage.goto();
     await expect(homePage.header.headerContainer).toBeVisible();
   });
 
-  test('should display upper-header elements', async ({ page }) => {
-    const homePage = new HomePage(page);
+  test('should display upper-header elements', async ({ homePage }) => {
+   
     logger.info('Navigating to home page');
     await homePage.goto();
 
@@ -30,8 +31,8 @@ test.describe('Home Page', () => {
     }
   });
 
-  test('should display lower-header elements', async ({ page }) => {
-    const homePage = new HomePage(page);
+  test('should display lower-header elements', async ({ homePage }) => {
+    
     logger.info('Navigating to home page');
     await homePage.goto();
 
@@ -48,8 +49,8 @@ test.describe('Home Page', () => {
     }
   });
 
-  test('should display menu-header elements', async ({ page }) => {
-    const homePage = new HomePage(page);
+  test('should display menu-header elements', async ({ homePage }) => {
+   
     logger.info('Navigating to home page');
     await homePage.goto();
 
@@ -70,4 +71,5 @@ test.describe('Home Page', () => {
       await expect(locator, `${name} should be visible`).toBeVisible();
     }
   });
+  
 });

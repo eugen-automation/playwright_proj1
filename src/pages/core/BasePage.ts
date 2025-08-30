@@ -1,11 +1,14 @@
 import { Page } from '@playwright/test';
+import { HeaderComponent } from '../../components/common/HeaderComponent';
 
 
 export class BasePage {
   protected readonly page: Page;
+  public header: HeaderComponent;
 
   constructor(page: Page) {
     this.page = page;
+    this.header = new HeaderComponent(page);
   }
 
 /**

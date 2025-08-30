@@ -13,7 +13,7 @@ jobs:
         run: npm ci
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
-      - name: Run Registration Tests
+      - name: Run User Registration Tests
         run: npx playwright test registration.spec.ts
       - name: Run tests
         run: npx playwright test --project=chromium

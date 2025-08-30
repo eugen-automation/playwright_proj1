@@ -1,21 +1,17 @@
-import { test, expect } from '@playwright/test';
-import { ProductDetailsPage } from '../../../src/pages/ProductDetailsPage';
+import { expect } from '@playwright/test';
+import { test } from '../../../fixtures/fixtures';
 import logger from '../../../src/utils/helpers/logger';
-import { HomePage } from '../../../src/pages/HomePage';
+
+
 
 test.describe('Cart Functionality', () => {
-  test('should add product to cart on Software page', async ({ page }) => {
-    const productPage = new ProductDetailsPage(page);
-    const homePage = new HomePage(page);
+  test('should add product to cart on Software page @smoke', async ({ homePage, productDetailsPage }) => {
+
     logger.info('Navigating to Software products page');
-    await productPage.goto('software');
+    await productDetailsPage.goto('software');
 
-
-    page.getByText('The product has been added to')
-
-
-    await productPage.productCard.addToCart();
+    await productDetailsPage.productCard.addToCart();
     await expect(homePage.header.cartButton).not.toHaveText('0');
-    await expect(page.getByText('The product has been added to')).toBeVisible();
+    await expect(homePage.header.isSuccessBarDisplayed()).toBeTruthy();
   });
 });

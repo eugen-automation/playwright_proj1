@@ -15,9 +15,4 @@ export class ProductDetailsPage extends BasePage {
     this.productName = page.locator('.product-name');
     this.productShortDescription = page.locator('.short-description');
   }
-
-  // async goto(productId: string) {
-  //   await super.goto(`/product/${productId}`);
-  //   await super.waitForPageLoad();
-  // }
 }
