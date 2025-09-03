@@ -32,4 +32,12 @@ export default defineConfig({
     //   use: { ...devices['Desktop Safari'] },
     // },
   ],
+  expect: {
+    toHaveScreenshot: {
+        // {testFilePath} includes folder structure of test file
+      pathTemplate: 'snapshots/baseLine/{testFilePath}/{arg}{ext}',
+      // Optional: configure max pixel difference tolerance
+      maxDiffPixels: 50,
+    },
+  },
 });
