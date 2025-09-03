@@ -5,11 +5,7 @@ import logger from '../../../src/utils/helpers/logger';
 test.describe('Home Page', () => {
 
 
-  await expect(page.locator('body')).toMatchAriaSnapshot(`
-    - text: /Copyright © \\d+ nopCommerce demo store\\. All rights reserved\\. Powered by/
-    - link "nopCommerce":
-      - /url: https://www.nopcommerce.com/
-    `);  test('should load and display header element', async ({ homePage }) => {
+  test('should load and display header element', async ({ homePage }) => {
 
     logger.info('Navigating to home page');
     await homePage.goto();
@@ -132,7 +128,6 @@ test.describe('Home Page', () => {
     // }
   });
 
-
   test('should display Intro under the banner', async ({ page, homePage }) => {
 
     logger.info('Navigating to home page');
@@ -153,7 +148,6 @@ test.describe('Home Page', () => {
         - /url: https://www.nopcommerce.com
     `);
   })
-
 
   test('should display Intro categories', async ({ homePage, page }) => {
 
@@ -181,7 +175,6 @@ test.describe('Home Page', () => {
       - img "Picture for category Digital downloads"
     `);
   })
-
 
   test('should display Feature products', async ({ homePage, page }) => {
 
@@ -288,12 +281,12 @@ test.describe('Home Page', () => {
     `);
   });
 
-    test('should display Footer', async ({ page, homePage }) => {
+  test('should display Footer', async ({ page, homePage }) => {
 
     logger.info('Navigating to home page');
     await homePage.goto();
 
-    
+
     await expect(page.locator('body')).toMatchAriaSnapshot(`
       - strong: Information
       - list:
@@ -378,12 +371,11 @@ test.describe('Home Page', () => {
       `);
 
 
-      await expect(page.locator('body')).toMatchAriaSnapshot(`
+    await expect(page.locator('body')).toMatchAriaSnapshot(`
         - text: /Copyright © \\d+ nopCommerce demo store\\. All rights reserved\\. Powered by/
         - link "nopCommerce":
           - /url: https://www.nopcommerce.com/
         `);
   });
-
 
 });
