@@ -8,6 +8,23 @@ const viewports = [
     { width: 1920, height: 1080 }  // Desktop
 ];
 
+test.beforeEach(async ({ page }) => {
+    // Disable animations pentru consistency
+    await page.addStyleTag({
+      content: `
+        *, *::before, *::after {
+          animation-delay: -1ms !important;
+          animation-duration: 1ms !important;
+          animation-iteration-count: 1 !important;
+          background-attachment: initial !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0s !important;
+          transition-delay: 0s !important;
+        }
+      `
+    });
+  });
+
 viewports.forEach(viewport => {
     test(`responsive design ${viewport.width}x${viewport.height}`, async ({ page }) => {
         try{
