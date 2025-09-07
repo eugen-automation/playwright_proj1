@@ -16,6 +16,6 @@ export class HomePage extends BasePage {
    */
   async goto() {
     await super.goto('/');
-    await this.waitForPageLoad();
+    await super.waitForPageLoad();
   }
 }

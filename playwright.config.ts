@@ -7,10 +7,10 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: [
-   ['list'], 
-  ['allure-playwright']
- 
-   
+    ['html'],
+    // ['allure-playwright']
+
+
   ],
   use: {
     baseURL: 'https://demo.nopcommerce.com',
@@ -32,12 +32,5 @@ export default defineConfig({
     //   use: { ...devices['Desktop Safari'] },
     // },
   ],
-  expect: {
-    toHaveScreenshot: {
-        // {testFilePath} includes folder structure of test file
-      pathTemplate: 'snapshots/baseLine/{testFilePath}/{arg}{ext}',
-      // Optional: configure max pixel difference tolerance
-      maxDiffPixels: 50,
-    },
-  },
+
 });

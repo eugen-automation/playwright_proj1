@@ -1,12 +1,15 @@
 import { expect } from '@playwright/test';
 import { test } from '../../../fixtures/fixtures';
 import logger from '../../../src/utils/helpers/logger';
+import defineConfig from '../../../playwright.config'
+
+
+// test.describe.configure({ mode: 'parallel' });
 
 test.describe('Home Page', () => {
 
-
   test('should load and display header element', async ({ homePage }) => {
-
+  // console.log(defineConfig.workers)
     logger.info('Navigating to home page');
     await homePage.goto();
     await expect(homePage.header.headerContainer).toBeVisible();
