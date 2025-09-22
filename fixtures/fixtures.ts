@@ -1,11 +1,11 @@
 import { test as base } from '@playwright/test';
 import * as userData from '../config/testData/registered-user.json';
 import { HomePage } from '../src/pages/HomePage';
-import { LoginPage} from '../src/pages/LoginPage';
+import { LoginPage } from '../src/pages/LoginPage';
 import { ProductDetailsPage } from '../src/pages/ProductDetailsPage';
-import {RegistrationPage} from '../src/pages/RegistrationPage';
-import {ShoppingCartPage} from '../src/pages/ShoppingCartPage';
-import { AuthUser} from '../src/types/types/login.type';
+import { RegistrationPage } from '../src/pages/RegistrationPage';
+import { ShoppingCartPage } from '../src/pages/ShoppingCartPage';
+import { IAuthCredentials } from '../src/types/interfaces/registration.interface';
 
 
 export const test = base.extend<{
@@ -14,7 +14,7 @@ export const test = base.extend<{
   productDetailsPage: ProductDetailsPage;
   registrationPage: RegistrationPage;
   shoppingCartPage: ShoppingCartPage;
-  registeredUser: AuthUser;
+  registeredUser: IAuthCredentials;
 }>({
   homePage: async ({ page }, use) => {
     await use(new HomePage(page));
@@ -31,7 +31,9 @@ export const test = base.extend<{
   shoppingCartPage: async ({ page }, use) => {
     await use(new ShoppingCartPage(page));
   },
-    registeredUser: async ({ }, use) => {
+  registeredUser: async ({ }, use) => {
     await use(userData.registeredUser);
   }
 });
+
+export { expect } from '@playwright/test';
