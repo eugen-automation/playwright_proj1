@@ -64,6 +64,9 @@ jobs:
     if: ${{ !cancelled() }}
     needs: [test]
     runs-on: ubuntu-latest
+    outputs:
+      build-id: ${{ steps.build-info.outputs.build-id }}
+      build-time: ${{ steps.build-info.outputs.build-time }}
 
     steps:
       - uses: actions/checkout@v4
@@ -84,14 +87,18 @@ jobs:
           pattern: blob-report-*
           merge-multiple: true
 
-      - name: Generate timestamped report
+      - name: Generate build info
+        id: build-info
         run: |
-          # Create build info
           BUILD_TIME=$(date -u +"%Y-%m-%d_%H-%M-%S")
           BUILD_ID="build-${BUILD_TIME}-${{ github.run_number }}"
+          echo "build-id=${BUILD_ID}" >> $GITHUB_OUTPUT
+          echo "build-time=${BUILD_TIME}" >> $GITHUB_OUTPUT
           echo "BUILD_ID=${BUILD_ID}" >> $GITHUB_ENV
           echo "BUILD_TIME=${BUILD_TIME}" >> $GITHUB_ENV
 
+      - name: Generate timestamped report
+        run: |
           if [ -d "all-blob-reports" ] && [ "$(find all-blob-reports -name "*.zip" | wc -l)" -gt 0 ]; then
             echo "Merging blob reports..."
             npx playwright merge-reports --reporter html ./all-blob-reports
@@ -150,9 +157,10 @@ jobs:
 
       - name: Setup build history
         run: |
-          BUILD_TIME=$(date -u +"%Y-%m-%d_%H-%M-%S")
-          BUILD_ID="build-${BUILD_TIME}-${{ github.run_number }}"
+          BUILD_ID="${{ needs.merge-reports.outputs.build-id }}"
+          BUILD_TIME="${{ needs.merge-reports.outputs.build-time }}"
           echo "BUILD_ID=${BUILD_ID}" >> $GITHUB_ENV
+          echo "BUILD_TIME=${BUILD_TIME}" >> $GITHUB_ENV
 
           # Create directory structure for history
           mkdir -p playwright-report
