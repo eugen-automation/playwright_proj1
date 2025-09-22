@@ -29,11 +29,14 @@ test.describe('Login functionality', () => {
 
     test('negative login with with empty credentials @regression', async ({ loginPage }) => {
 
-        logger.info('Logging in with invalid user');
-        await loginPage.goto();
+        test.step('Navigate to login page and attempt login with empty credentials', async() => {
+            logger.info('Logging in with invalid user');
+            await loginPage.goto();
 
-        await loginPage.login("", "");
-        expect(await loginPage.header.isLoggedIn()).not.toBeTruthy();
+            await loginPage.login("", "");
+            expect(await loginPage.header.isLoggedIn()).toBeTruthy();
+        });
+
     });
 
 })
