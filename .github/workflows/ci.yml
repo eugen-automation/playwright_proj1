@@ -114,7 +114,9 @@ jobs:
             echo "No blob reports found, creating empty report directory"
             mkdir -p playwright-report
             echo "<h1>No test reports found for build ${BUILD_ID}</h1>" > playwright-report/index.html
-          fi      - name: Upload merged report
+          fi
+
+      - name: Upload merged report
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-merged
