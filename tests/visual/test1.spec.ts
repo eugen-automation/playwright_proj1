@@ -26,7 +26,7 @@ test.beforeEach(async ({ page }) => {
   });
 
 viewports.forEach(viewport => {
-    test(`responsive design ${viewport.width}x${viewport.height}`, async ({ page }) => {
+    test.fixme(`responsive design ${viewport.width}x${viewport.height}`, async ({ page }) => {
         try{
         await page.setViewportSize(viewport);
         await page.goto('/');

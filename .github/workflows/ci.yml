@@ -7,7 +7,7 @@ on:
     branches: [main, master]
   schedule:
     # Run tests every Monday at 2 AM UTC
-    - cron: '0 2 * * 1'
+    - cron: "0 2 * * 1"
 
 env:
   # Fail fast on CI
@@ -25,11 +25,11 @@ jobs:
       matrix:
         # Run tests in parallel across multiple shards for faster execution
         shard: [1, 2]
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -37,26 +37,24 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-            
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Validate Playwright configuration
         run: npx playwright --version
-        
+
       - name: Run Playwright tests
-        run: npx playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        run: npx playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }} --reporter=blob
         env:
           PLAYWRIGHT_TEST_BASE_URL: https://demowebshop.tricentis.com
-          
+
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: playwright-report-shard-${{ matrix.shard }}
-          path: |
-            playwright-report/
-            test-results/
+          name: blob-report-${{ matrix.shard }}
+          path: blob-report/
           retention-days: 30
 
   merge-reports:
@@ -64,29 +62,43 @@ jobs:
     if: ${{ !cancelled() }}
     needs: [test]
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
-          cache: 'npm'
-          
+          node-version: "lts/*"
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          path: all-reports
-          pattern: playwright-report-shard-*
+          path: all-blob-reports
+          pattern: blob-report-*
           merge-multiple: true
-          
+
+      - name: Check for blob reports
+        run: |
+          echo "Checking for blob reports..."
+          ls -la all-blob-reports/ || echo "No blob reports directory found"
+          find all-blob-reports/ -name "*.zip" || echo "No zip files found"
+
       - name: Merge into HTML Report
-        run: npx playwright merge-reports --reporter html ./all-reports
-        
+        run: |
+          if [ -d "all-blob-reports" ] && [ "$(find all-blob-reports -name "*.zip" | wc -l)" -gt 0 ]; then
+            echo "Merging blob reports..."
+            npx playwright merge-reports --reporter html ./all-blob-reports
+          else
+            echo "No blob reports found, creating empty report directory"
+            mkdir -p playwright-report
+            echo "<h1>No test reports found</h1>" > playwright-report/index.html
+          fi
+
       - name: Upload merged report
         uses: actions/upload-artifact@v4
         with:
@@ -105,26 +117,26 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-      
+
     steps:
       - name: Download merged report
         uses: actions/download-artifact@v4
         with:
           name: playwright-report-merged
           path: playwright-report
-          
+
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
-        
+
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: playwright-report
-          
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        
+
       - name: Comment PR with report link
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
@@ -142,7 +154,7 @@ jobs:
     needs: [test]
     if: failure()
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Send failure notification
         run: |
