@@ -191,26 +191,24 @@ jobs:
           mkdir -p "playwright-report/history/${BUILD_ID}"
           cp -r current-report/* "playwright-report/history/${BUILD_ID}/"
 
-          # Create history index page
-          cat > playwright-report/history/index.html << 'EOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <title>Playwright Test Reports History</title>
-            <style>
-              body { font-family: Arial, sans-serif; margin: 20px; }
-              .build-link { display: block; padding: 10px; margin: 5px 0; background: #f5f5f5; text-decoration: none; border-radius: 5px; }
-              .build-link:hover { background: #e0e0e0; }
-              .current { background: #e8f5e8; font-weight: bold; }
-            </style>
-          </head>
-          <body>
-            <h1>🎭 Playwright Test Reports History</h1>
-            <p><a href="../index.html">← Back to Latest Report</a></p>
-            <div style="background: #fff3cd; padding: 10px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #ffc107;">
-              <strong>📅 Retention Policy:</strong> Reports are automatically cleaned up after 30 days to save storage space.
-            </div>
-          EOF
+          # Create history index page with echo commands
+          echo '<!DOCTYPE html>' > playwright-report/history/index.html
+          echo '<html>' >> playwright-report/history/index.html
+          echo '<head>' >> playwright-report/history/index.html
+          echo '  <title>Playwright Test Reports History</title>' >> playwright-report/history/index.html
+          echo '  <style>' >> playwright-report/history/index.html
+          echo '    body { font-family: Arial, sans-serif; margin: 20px; }' >> playwright-report/history/index.html
+          echo '    .build-link { display: block; padding: 10px; margin: 5px 0; background: #f5f5f5; text-decoration: none; border-radius: 5px; }' >> playwright-report/history/index.html
+          echo '    .build-link:hover { background: #e0e0e0; }' >> playwright-report/history/index.html
+          echo '    .current { background: #e8f5e8; font-weight: bold; }' >> playwright-report/history/index.html
+          echo '  </style>' >> playwright-report/history/index.html
+          echo '</head>' >> playwright-report/history/index.html
+          echo '<body>' >> playwright-report/history/index.html
+          echo '  <h1>🎭 Playwright Test Reports History</h1>' >> playwright-report/history/index.html
+          echo '  <p><a href="../index.html">← Back to Latest Report</a></p>' >> playwright-report/history/index.html
+          echo '  <div style="background: #fff3cd; padding: 10px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #ffc107;">' >> playwright-report/history/index.html
+          echo '    <strong>📅 Retention Policy:</strong> Reports are automatically cleaned up after 30 days to save storage space.' >> playwright-report/history/index.html
+          echo '  </div>' >> playwright-report/history/index.html
 
           # Count and list all builds (newest first)
           BUILD_COUNT=$(ls -1 playwright-report/history/ | grep "^build-" | wc -l)
@@ -224,13 +222,32 @@ jobs:
             fi
           done
 
-          cat >> playwright-report/history/index.html << 'EOF'
-          </body>
-          </html>
-          EOF
+          # Close the HTML document
+          echo '</body>' >> playwright-report/history/index.html
+          echo '</html>' >> playwright-report/history/index.html
 
-          # Add history link to main report
-          sed -i 's|<body|<body><div style="background: #f0f8ff; padding: 10px; margin: 10px 0; border-radius: 5px;"><a href="history/index.html" style="text-decoration: none;">📚 View Test History</a> | <strong>Build:</strong> '${BUILD_ID}' | <strong>Browsers:</strong> Chromium, Firefox, WebKit</div>|' playwright-report/index.html
+          # Add history link to main report using safer method
+          if [ -f "playwright-report/index.html" ]; then
+            # Create temporary file with the header content
+            echo "<div style=\"background: #f0f8ff; padding: 10px; margin: 10px 0; border-radius: 5px;\">" > temp_header.html
+            echo "<a href=\"history/index.html\" style=\"text-decoration: none;\">📚 View Test History</a> | " >> temp_header.html
+            echo "<strong>Build:</strong> ${BUILD_ID} | " >> temp_header.html
+            echo "<strong>Browsers:</strong> Chromium, Firefox, WebKit" >> temp_header.html
+            echo "</div>" >> temp_header.html
+            
+            # Use awk to safely insert the header after <body> tag
+            awk '
+            /<body/ {
+              print $0
+              system("cat temp_header.html")
+              next
+            }
+            { print }
+            ' playwright-report/index.html > temp_report.html
+            
+            mv temp_report.html playwright-report/index.html
+            rm -f temp_header.html
+          fi
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
