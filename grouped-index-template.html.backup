@@ -14,7 +14,7 @@
         .nav-tab:hover { background: #3b82f6; color: white; }
         .tab-content { display: none; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .tab-content.active { display: block; }
-        .browser-group { margin-bottom: 30px; transition: opacity 0.3s ease; }
+        .browser-group { margin-bottom: 30px; }
         .browser-header { background: #1f2937; color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
         .test-group { margin-bottom: 20px; padding: 15px; border: 1px solid #e5e7eb; border-radius: 8px; }
         .test-group h3 { margin: 0 0 10px 0; color: #374151; }
@@ -34,7 +34,7 @@
         .failed-number { color: #ef4444; }
         .total-number { color: #2563eb; }
         .links { margin-top: 20px; padding: 15px; background: white; border-radius: 8px; }
-        .btn { display: inline-block; padding: 10px 20px; margin: 5px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; transition: background 0.3s; cursor: pointer; border: none; }
+        .btn { display: inline-block; padding: 10px 20px; margin: 5px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; transition: background 0.3s; }
         .btn:hover { background: #1d4ed8; }
         .btn-secondary { background: #6b7280; }
         .btn-secondary:hover { background: #4b5563; }
@@ -151,11 +151,10 @@
     </div>
     
     <div class="links">
-        <h3>🌐 Browser-Specific Results:</h3>
-        <a href="#" class="btn" onclick="showBrowserOnly('chromium')">🌐 Chromium Results</a>
-        <a href="#" class="btn" onclick="showBrowserOnly('firefox')">🦊 Firefox Results</a>
-        <a href="#" class="btn" onclick="showBrowserOnly('webkit')">🧭 WebKit Results</a>
-        <a href="#" class="btn btn-secondary" onclick="showAllBrowsers()">📊 Show All Browsers</a>
+        <h3>📚 Additional Resources:</h3>
+        <a href="original-index.html" class="btn">🔍 Detailed Playwright Report</a>
+        <a href="run-info.json" class="btn btn-secondary" target="_blank">📄 Run Metadata</a>
+        <a href="https://github.com/eugen-automation/playwright_proj1/actions" class="btn btn-secondary" target="_blank">� All Runs</a>
     </div>
     
     <script>
@@ -165,53 +164,6 @@
             
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
-        }
-        
-        function showBrowserOnly(browserName) {
-            // Switch to "By Browser" tab
-            showTabProgrammatically('by-browser');
-            
-            // Hide all browser groups
-            document.querySelectorAll('.browser-group').forEach(group => {
-                group.style.display = 'none';
-            });
-            
-            // Show only the selected browser
-            const browserMap = {
-                'chromium': 0,
-                'firefox': 1, 
-                'webkit': 2
-            };
-            
-            const browserIndex = browserMap[browserName];
-            if (browserIndex !== undefined) {
-                const browserGroups = document.querySelectorAll('.browser-group');
-                if (browserGroups[browserIndex]) {
-                    browserGroups[browserIndex].style.display = 'block';
-                }
-            }
-        }
-        
-        function showAllBrowsers() {
-            // Switch to "By Browser" tab
-            showTabProgrammatically('by-browser');
-            
-            // Show all browser groups
-            document.querySelectorAll('.browser-group').forEach(group => {
-                group.style.display = 'block';
-            });
-        }
-        
-        function showTabProgrammatically(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-            
-            document.getElementById(tabName).classList.add('active');
-            // Find and activate the corresponding nav tab
-            const tabs = document.querySelectorAll('.nav-tab');
-            if (tabName === 'by-browser') tabs[0].classList.add('active');
-            else if (tabName === 'by-suite') tabs[1].classList.add('active');
-            else if (tabName === 'overview') tabs[2].classList.add('active');
         }
         
         document.addEventListener('DOMContentLoaded', function() {
