@@ -168,6 +168,27 @@ jobs:
             cp -r gh-pages-history/history/* playwright-report/history/ 2>/dev/null || true
           fi
 
+          # Clean up old reports (keep only last 30 days)
+          CUTOFF_DATE=$(date -d '30 days ago' +%Y-%m-%d)
+          echo "Cleaning up reports older than ${CUTOFF_DATE}"
+
+          if [ -d "playwright-report/history" ]; then
+            for build_dir in playwright-report/history/build-*; do
+              if [ -d "$build_dir" ]; then
+                # Extract date from build directory name (format: build-YYYY-MM-DD_HH-MM-SS-number)
+                build_date=$(basename "$build_dir" | sed 's/build-\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\).*/\1/')
+                
+                # Compare dates (only if we can extract a valid date)
+                if [[ "$build_date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] && [[ "$build_date" < "$CUTOFF_DATE" ]]; then
+                  echo "Removing old build: $build_dir (date: $build_date)"
+                  rm -rf "$build_dir"
+                else
+                  echo "Keeping build: $build_dir (date: $build_date)"
+                fi
+              fi
+            done
+          fi
+
           # Save current build to history
           mkdir -p "playwright-report/history/${BUILD_ID}"
           cp -r current-report/* "playwright-report/history/${BUILD_ID}/"
@@ -188,9 +209,15 @@ jobs:
           <body>
             <h1>🎭 Playwright Test Reports History</h1>
             <p><a href="../index.html">← Back to Latest Report</a></p>
+            <div style="background: #fff3cd; padding: 10px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #ffc107;">
+              <strong>📅 Retention Policy:</strong> Reports are automatically cleaned up after 30 days to save storage space.
+            </div>
           EOF
 
-          # List all builds (newest first)
+          # Count and list all builds (newest first)
+          BUILD_COUNT=$(ls -1 playwright-report/history/ | grep "^build-" | wc -l)
+          echo "    <p><strong>📊 Total Reports:</strong> ${BUILD_COUNT}</p>" >> playwright-report/history/index.html
+
           for dir in $(ls -1 playwright-report/history/ | grep "^build-" | sort -r); do
             if [ "$dir" = "${BUILD_ID}" ]; then
               echo "    <a href=\"$dir/index.html\" class=\"build-link current\">📊 $dir (Current)</a>" >> playwright-report/history/index.html
