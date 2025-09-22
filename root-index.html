@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playwright Test Reports - Unique Runs</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 40px; 
+            background: #f5f5f5; 
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+        }
+        h1 { 
+            color: #2563eb; 
+            border-bottom: 3px solid #2563eb; 
+            padding-bottom: 15px; 
+            margin-bottom: 30px;
+        }
+        .info-box { 
+            background: #e7f3ff; 
+            padding: 20px; 
+            border-radius: 8px; 
+            border-left: 4px solid #2563eb; 
+            margin: 20px 0; 
+        }
+        .warning-box { 
+            background: #fff3cd; 
+            padding: 20px; 
+            border-radius: 8px; 
+            border-left: 4px solid #ffc107; 
+            margin: 20px 0; 
+        }
+        .success-box { 
+            background: #d1fae5; 
+            padding: 20px; 
+            border-radius: 8px; 
+            border-left: 4px solid #10b981; 
+            margin: 20px 0; 
+        }
+        .code { 
+            background: #f8f9fa; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            font-family: monospace; 
+            color: #e83e8c;
+        }
+        .url-example { 
+            background: #1e293b; 
+            color: #e2e8f0; 
+            padding: 15px; 
+            border-radius: 8px; 
+            font-family: monospace; 
+            margin: 15px 0; 
+            overflow-x: auto;
+        }
+        .feature-list { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 20px; 
+            margin: 30px 0; 
+        }
+        .feature-card { 
+            background: #f8fafc; 
+            padding: 20px; 
+            border-radius: 8px; 
+            border: 1px solid #e2e8f0; 
+        }
+        .feature-card h3 { 
+            color: #1e40af; 
+            margin-top: 0; 
+        }
+        .btn { 
+            display: inline-block; 
+            padding: 12px 24px; 
+            background: #2563eb; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 6px; 
+            transition: background 0.3s; 
+            margin: 5px; 
+        }
+        .btn:hover { 
+            background: #1d4ed8; 
+        }
+        .btn-secondary { 
+            background: #6b7280; 
+        }
+        .btn-secondary:hover { 
+            background: #4b5563; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Playwright Test Reports - Unique Run Architecture</h1>
+        
+        <div class="success-box">
+            <h2>✅ New Architecture: Unique Paths for Each Test Run</h2>
+            <p>Starting now, each test execution gets its own unique URL path. No more centralized history - each run is self-contained and directly accessible!</p>
+        </div>
+
+        <div class="info-box">
+            <h3>🎯 How It Works</h3>
+            <p>Each CI/CD run creates a unique path based on the build timestamp:</p>
+            <div class="url-example">
+https://eugen-automation.github.io/playwright_proj1/runs/build-2025-09-22_14-30-15-001/
+            </div>
+            <p>This URL contains:</p>
+            <ul>
+                <li><strong>Grouped Report:</strong> <span class="code">index.html</span> - Modern dashboard with browser/suite grouping</li>
+                <li><strong>Detailed Report:</strong> <span class="code">original-index.html</span> - Full Playwright report</li>
+                <li><strong>Run Metadata:</strong> <span class="code">run-info.json</span> - Complete execution details</li>
+            </ul>
+        </div>
+
+        <div class="feature-list">
+            <div class="feature-card">
+                <h3>🔗 Direct Access</h3>
+                <p>Share exact test run results with colleagues using the unique URL. No need to navigate through history.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>📦 Self-Contained</h3>
+                <p>Each run includes all data, metadata, and links. No dependencies on central history.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🔄 Parallel Safe</h3>
+                <p>Multiple runs can execute simultaneously without conflicts or overwrites.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>📊 Rich Metadata</h3>
+                <p>Each run includes build ID, timestamp, commit SHA, branch, and execution details.</p>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <h3>⚠️ What Changed</h3>
+            <ul>
+                <li><strong>No Central History:</strong> The <span class="code">/history/</span> page is removed</li>
+                <li><strong>Unique URLs:</strong> Each run has its own permanent URL</li>
+                <li><strong>Direct Deployment:</strong> Reports go directly to <span class="code">/runs/{BUILD_ID}/</span></li>
+                <li><strong>No Cleanup:</strong> No automatic deletion of old reports (GitHub Pages handles storage)</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h3>🚀 Access Your Reports</h3>
+            <p>To find your test runs:</p>
+            <ol>
+                <li><strong>From GitHub Actions:</strong> Each workflow run logs the unique URL</li>
+                <li><strong>From CI Comments:</strong> PR comments include the direct report link</li>
+                <li><strong>From Metadata:</strong> Each run includes <span class="code">run-info.json</span> with all details</li>
+            </ol>
+            
+            <div class="url-example">
+# Example: Check the workflow logs for lines like:
+🔗 Report URL will be: https://eugen-automation.github.io/playwright_proj1/runs/build-2025-09-22_14-30-15-001/
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="https://github.com/eugen-automation/playwright_proj1/actions" class="btn">📋 View All Workflow Runs</a>
+            <a href="https://github.com/eugen-automation/playwright_proj1" class="btn btn-secondary">📖 View Repository</a>
+        </div>
+
+        <div class="info-box" style="margin-top: 40px;">
+            <h3>📄 Technical Details</h3>
+            <p><strong>Path Structure:</strong> <span class="code">/runs/{BUILD_ID}/</span></p>
+            <p><strong>Build ID Format:</strong> <span class="code">build-YYYY-MM-DD_HH-MM-SS-XXX</span></p>
+            <p><strong>Browser Coverage:</strong> Chromium, Firefox, WebKit</p>
+            <p><strong>Report Types:</strong> Grouped Dashboard + Detailed Playwright + JSON Metadata</p>
+        </div>
+    </div>
+</body>
+</html>
