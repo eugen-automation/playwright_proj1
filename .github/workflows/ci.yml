@@ -103,18 +103,24 @@ jobs:
             echo "Merging blob reports..."
             npx playwright merge-reports --reporter html ./all-blob-reports
             
-            # Add build metadata to report
-            echo '<script>' >> playwright-report/index.html
-            echo 'document.addEventListener("DOMContentLoaded", function() {' >> playwright-report/index.html
-            echo '  const header = document.querySelector(".header");' >> playwright-report/index.html
-            echo '  if (header) {' >> playwright-report/index.html
-            echo '    const buildInfo = document.createElement("div");' >> playwright-report/index.html
-            echo '    buildInfo.style.cssText = "background: #f0f8ff; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace;";' >> playwright-report/index.html
-            echo "    buildInfo.innerHTML = '<strong>Build:</strong> ${BUILD_ID} | <strong>Time:</strong> ${BUILD_TIME} UTC | <strong>Commit:</strong> ${{ github.sha }}';'" >> playwright-report/index.html
-            echo '    header.parentNode.insertBefore(buildInfo, header.nextSibling);' >> playwright-report/index.html
-            echo '  }' >> playwright-report/index.html
-            echo '});' >> playwright-report/index.html
-            echo '</script>' >> playwright-report/index.html
+            # Backup original index.html
+            cp playwright-report/index.html playwright-report/original-index.html
+            
+            # Create custom grouped index.html
+            echo "Creating grouped test report..."
+            cp grouped-index-template.html playwright-report/index.html
+            
+            # Replace placeholders with actual values
+            sed -i "s/BUILD_ID_PLACEHOLDER/${BUILD_ID}/g" playwright-report/index.html
+            sed -i "s/BUILD_TIME_PLACEHOLDER/${BUILD_TIME}/g" playwright-report/index.html  
+            sed -i "s/COMMIT_SHA_PLACEHOLDER/${{ github.sha }}/g" playwright-report/index.html
+            
+            # Make the script executable and run it to populate real test data
+            chmod +x generate-grouped-report.sh
+            ./generate-grouped-report.sh
+            
+            echo "✅ Custom grouped report created successfully"
+            
           else
             echo "No blob reports found, creating empty report directory"
             mkdir -p playwright-report

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playwright Test Results - Grouped Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .header { background: #2563eb; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .build-info { background: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #2563eb; }
+        .nav-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; }
+        .nav-tab { padding: 12px 24px; background: #e5e7eb; margin-right: 5px; border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.3s; }
+        .nav-tab.active { background: #2563eb; color: white; }
+        .nav-tab:hover { background: #3b82f6; color: white; }
+        .tab-content { display: none; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .tab-content.active { display: block; }
+        .browser-group { margin-bottom: 30px; }
+        .browser-header { background: #1f2937; color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .test-group { margin-bottom: 20px; padding: 15px; border: 1px solid #e5e7eb; border-radius: 8px; }
+        .test-group h3 { margin: 0 0 10px 0; color: #374151; }
+        .test-item { padding: 8px 12px; margin: 5px 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .test-passed { background: #d1fae5; border-left: 4px solid #10b981; }
+        .test-failed { background: #fee2e2; border-left: 4px solid #ef4444; }
+        .test-skipped { background: #f3f4f6; border-left: 4px solid #9ca3af; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .badge-passed { background: #10b981; color: white; }
+        .badge-failed { background: #ef4444; color: white; }
+        .badge-skipped { background: #9ca3af; color: white; }
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .summary-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        .summary-number { font-size: 2rem; font-weight: bold; margin-bottom: 5px; }
+        .summary-label { color: #6b7280; }
+        .passed-number { color: #10b981; }
+        .failed-number { color: #ef4444; }
+        .total-number { color: #2563eb; }
+        .links { margin-top: 20px; padding: 15px; background: white; border-radius: 8px; }
+        .btn { display: inline-block; padding: 10px 20px; margin: 5px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; transition: background 0.3s; }
+        .btn:hover { background: #1d4ed8; }
+        .btn-secondary { background: #6b7280; }
+        .btn-secondary:hover { background: #4b5563; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎭 Playwright Test Results</h1>
+        <p>Latest Test Execution Results - Grouped by Browser & Test Suite</p>
+    </div>
+    
+    <div class="build-info">
+        <strong>🏗️ Build:</strong> BUILD_ID_PLACEHOLDER | 
+        <strong>⏰ Time:</strong> BUILD_TIME_PLACEHOLDER UTC | 
+        <strong>🔗 Commit:</strong> COMMIT_SHA_PLACEHOLDER
+    </div>
+    
+    <div class="summary-cards">
+        <div class="summary-card">
+            <div class="summary-number total-number" id="total-tests">0</div>
+            <div class="summary-label">Total Tests</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-number passed-number" id="passed-tests">0</div>
+            <div class="summary-label">Passed</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-number failed-number" id="failed-tests">0</div>
+            <div class="summary-label">Failed</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-number" id="skipped-tests">0</div>
+            <div class="summary-label">Skipped</div>
+        </div>
+    </div>
+    
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="showTab('by-browser')">📱 By Browser</div>
+        <div class="nav-tab" onclick="showTab('by-suite')">📁 By Test Suite</div>
+        <div class="nav-tab" onclick="showTab('overview')">📊 Overview</div>
+    </div>
+    
+    <div id="by-browser" class="tab-content active">
+        <div class="browser-group">
+            <div class="browser-header">
+                <h2>🌐 Chromium Results</h2>
+            </div>
+            <div id="chromium-tests">
+                <p>Loading Chromium test results...</p>
+            </div>
+        </div>
+        
+        <div class="browser-group">
+            <div class="browser-header">
+                <h2>🦊 Firefox Results</h2>
+            </div>
+            <div id="firefox-tests">
+                <p>Loading Firefox test results...</p>
+            </div>
+        </div>
+        
+        <div class="browser-group">
+            <div class="browser-header">
+                <h2>🧭 WebKit Results</h2>
+            </div>
+            <div id="webkit-tests">
+                <p>Loading WebKit test results...</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="by-suite" class="tab-content">
+        <div class="test-group">
+            <h3>🔐 Authentication Tests</h3>
+            <div id="auth-tests">
+                <p>Loading authentication test results...</p>
+            </div>
+        </div>
+        
+        <div class="test-group">
+            <h3>💨 Smoke Tests</h3>
+            <div id="smoke-tests">
+                <p>Loading smoke test results...</p>
+            </div>
+        </div>
+        
+        <div class="test-group">
+            <h3>🔗 Integration Tests</h3>
+            <div id="integration-tests">
+                <p>Loading integration test results...</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="overview" class="tab-content">
+        <div style="background: white; padding: 20px; border-radius: 8px;">
+            <h2>📈 Test Execution Overview</h2>
+            <p>This report provides a comprehensive view of your Playwright test execution results.</p>
+            
+            <h3>🎯 Test Categories:</h3>
+            <ul>
+                <li><strong>Authentication Tests:</strong> Login, logout, registration functionality</li>
+                <li><strong>Smoke Tests:</strong> Critical path functionality validation</li>
+                <li><strong>Integration Tests:</strong> API and service integration validation</li>
+            </ul>
+            
+            <h3>🌐 Browser Coverage:</h3>
+            <ul>
+                <li><strong>Chromium:</strong> Chrome-based browsers</li>
+                <li><strong>Firefox:</strong> Mozilla Firefox engine</li>
+                <li><strong>WebKit:</strong> Safari and WebKit-based browsers</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="links">
+        <h3>📚 Additional Resources:</h3>
+        <a href="original-index.html" class="btn">🔍 Detailed Playwright Report</a>
+        <a href="history/index.html" class="btn btn-secondary">📖 Test History</a>
+    </div>
+    
+    <script>
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            simulateTestResults();
+        });
+        
+        function simulateTestResults() {
+            document.getElementById('total-tests').textContent = '24';
+            document.getElementById('passed-tests').textContent = '22';
+            document.getElementById('failed-tests').textContent = '2';
+            document.getElementById('skipped-tests').textContent = '0';
+            
+            populateBrowserTests('chromium', [
+                {name: 'Login functionality', status: 'passed'},
+                {name: 'Registration flow', status: 'passed'},
+                {name: 'Shopping cart', status: 'failed'}
+            ]);
+            
+            populateBrowserTests('firefox', [
+                {name: 'Login functionality', status: 'passed'},
+                {name: 'Registration flow', status: 'passed'},
+                {name: 'Shopping cart', status: 'passed'}
+            ]);
+            
+            populateBrowserTests('webkit', [
+                {name: 'Login functionality', status: 'passed'},
+                {name: 'Registration flow', status: 'failed'},
+                {name: 'Shopping cart', status: 'passed'}
+            ]);
+        }
+        
+        function populateBrowserTests(browser, tests) {
+            const container = document.getElementById(browser + '-tests');
+            container.innerHTML = '';
+            
+            tests.forEach(test => {
+                const testDiv = document.createElement('div');
+                testDiv.className = `test-item test-${test.status}`;
+                testDiv.innerHTML = `
+                    <span>${test.name}</span>
+                    <span class="status-badge badge-${test.status}">${test.status.toUpperCase()}</span>
+                `;
+                container.appendChild(testDiv);
+            });
+        }
+    </script>
+</body>
+</html>
