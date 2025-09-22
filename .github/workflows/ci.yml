@@ -1,30 +1,102 @@
 name: Playwright Tests
+
 on:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  schedule:
+    # Run tests every Monday at 2 AM UTC
+    - cron: '0 2 * * 1'
+
+env:
+  # Fail fast on CI
+  CI: true
+
 jobs:
   test:
+    name: Run Playwright Tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.55.0-noble
+    strategy:
+      fail-fast: false
+      matrix:
+        # Run tests in parallel across multiple shards for faster execution
+        shard: [1, 2]
+    
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+            
       - name: Install dependencies
         run: npm ci
+        
+      - name: Validate Playwright configuration
+        run: npx playwright --version
+        
       - name: Run Playwright tests
-        run: npx playwright test
-      - uses: actions/upload-artifact@v4
+        run: npx playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: https://demowebshop.tricentis.com
+          
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: playwright-report
+          name: playwright-report-shard-${{ matrix.shard }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
+
+  merge-reports:
+    name: Merge Test Reports
+    if: ${{ !cancelled() }}
+    needs: [test]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-reports
+          pattern: playwright-report-shard-*
+          merge-multiple: true
+          
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./all-reports
+        
+      - name: Upload merged report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-merged
           path: playwright-report/
           retention-days: 30
 
   deploy-github-pages:
-    needs: test
+    name: Deploy Reports to GitHub Pages
+    needs: [test, merge-reports]
     if: always()
     runs-on: ubuntu-latest
     permissions:
@@ -33,18 +105,46 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+      
     steps:
-      - name: Download Playwright report artifact
+      - name: Download merged report
         uses: actions/download-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-merged
           path: playwright-report
-      - name: Setup Pages
+          
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
+        
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: playwright-report
+          
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        
+      - name: Comment PR with report link
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '📊 **Playwright Test Report**: ${{ steps.deployment.outputs.page_url }}'
+            })
+
+  notify-on-failure:
+    name: Notify on Test Failure
+    needs: [test]
+    if: failure()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Send failure notification
+        run: |
+          echo "::error::Playwright tests failed! Check the test results for details."
+          echo "::notice::You can view the detailed report in the GitHub Pages deployment."
