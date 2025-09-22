@@ -23,8 +23,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Run tests in parallel across multiple shards for faster execution
-        shard: [1, 2]
+        # Run tests grouped by browser for better organization
+        browser: [chromium, firefox, webkit]
+        # Optional: Add sharding per browser for very large test suites
+        # shard: [1, 2]
 
     steps:
       - name: Checkout repository
@@ -45,7 +47,7 @@ jobs:
         run: npx playwright --version
 
       - name: Run Playwright tests
-        run: npx playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }} --reporter=blob
+        run: npx playwright test --project=${{ matrix.browser }} --reporter=blob
         env:
           PLAYWRIGHT_TEST_BASE_URL: https://demowebshop.tricentis.com
 
@@ -53,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: blob-report-${{ matrix.shard }}
+          name: blob-report-${{ matrix.browser }}
           path: blob-report/
           retention-days: 30
 
@@ -82,24 +84,37 @@ jobs:
           pattern: blob-report-*
           merge-multiple: true
 
-      - name: Check for blob reports
+      - name: Generate timestamped report
         run: |
-          echo "Checking for blob reports..."
-          ls -la all-blob-reports/ || echo "No blob reports directory found"
-          find all-blob-reports/ -name "*.zip" || echo "No zip files found"
+          # Create build info
+          BUILD_TIME=$(date -u +"%Y-%m-%d_%H-%M-%S")
+          BUILD_ID="build-${BUILD_TIME}-${{ github.run_number }}"
+          echo "BUILD_ID=${BUILD_ID}" >> $GITHUB_ENV
+          echo "BUILD_TIME=${BUILD_TIME}" >> $GITHUB_ENV
 
-      - name: Merge into HTML Report
-        run: |
           if [ -d "all-blob-reports" ] && [ "$(find all-blob-reports -name "*.zip" | wc -l)" -gt 0 ]; then
             echo "Merging blob reports..."
             npx playwright merge-reports --reporter html ./all-blob-reports
+            
+            # Add build metadata to report
+            cat >> playwright-report/index.html << EOF
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              const header = document.querySelector('.header');
+              if (header) {
+                const buildInfo = document.createElement('div');
+                buildInfo.style.cssText = 'background: #f0f8ff; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace;';
+                buildInfo.innerHTML = '<strong>Build:</strong> ${BUILD_ID} | <strong>Time:</strong> ${BUILD_TIME} UTC | <strong>Commit:</strong> ${{ github.sha }}';
+                header.parentNode.insertBefore(buildInfo, header.nextSibling);
+              }
+            });
+            </script>
+            EOF
           else
             echo "No blob reports found, creating empty report directory"
             mkdir -p playwright-report
-            echo "<h1>No test reports found</h1>" > playwright-report/index.html
-          fi
-
-      - name: Upload merged report
+            echo "<h1>No test reports found for build ${BUILD_ID}</h1>" > playwright-report/index.html
+          fi      - name: Upload merged report
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-merged
@@ -123,7 +138,72 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: playwright-report-merged
-          path: playwright-report
+          path: current-report
+
+      - name: Checkout gh-pages branch for history
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages-history
+          fetch-depth: 0
+        continue-on-error: true
+
+      - name: Setup build history
+        run: |
+          BUILD_TIME=$(date -u +"%Y-%m-%d_%H-%M-%S")
+          BUILD_ID="build-${BUILD_TIME}-${{ github.run_number }}"
+          echo "BUILD_ID=${BUILD_ID}" >> $GITHUB_ENV
+
+          # Create directory structure for history
+          mkdir -p playwright-report
+          mkdir -p playwright-report/history
+
+          # Copy current report
+          cp -r current-report/* playwright-report/
+
+          # Copy existing history if available
+          if [ -d "gh-pages-history/history" ]; then
+            cp -r gh-pages-history/history/* playwright-report/history/ 2>/dev/null || true
+          fi
+
+          # Save current build to history
+          mkdir -p "playwright-report/history/${BUILD_ID}"
+          cp -r current-report/* "playwright-report/history/${BUILD_ID}/"
+
+          # Create history index page
+          cat > playwright-report/history/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Playwright Test Reports History</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              .build-link { display: block; padding: 10px; margin: 5px 0; background: #f5f5f5; text-decoration: none; border-radius: 5px; }
+              .build-link:hover { background: #e0e0e0; }
+              .current { background: #e8f5e8; font-weight: bold; }
+            </style>
+          </head>
+          <body>
+            <h1>🎭 Playwright Test Reports History</h1>
+            <p><a href="../index.html">← Back to Latest Report</a></p>
+          EOF
+
+          # List all builds (newest first)
+          for dir in $(ls -1 playwright-report/history/ | grep "^build-" | sort -r); do
+            if [ "$dir" = "${BUILD_ID}" ]; then
+              echo "    <a href=\"$dir/index.html\" class=\"build-link current\">📊 $dir (Current)</a>" >> playwright-report/history/index.html
+            else
+              echo "    <a href=\"$dir/index.html\" class=\"build-link\">📋 $dir</a>" >> playwright-report/history/index.html
+            fi
+          done
+
+          cat >> playwright-report/history/index.html << 'EOF'
+          </body>
+          </html>
+          EOF
+
+          # Add history link to main report
+          sed -i 's|<body|<body><div style="background: #f0f8ff; padding: 10px; margin: 10px 0; border-radius: 5px;"><a href="history/index.html" style="text-decoration: none;">📚 View Test History</a> | <strong>Build:</strong> '${BUILD_ID}' | <strong>Browsers:</strong> Chromium, Firefox, WebKit</div>|' playwright-report/index.html
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
@@ -146,7 +226,17 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '📊 **Playwright Test Report**: ${{ steps.deployment.outputs.page_url }}'
+              body: `
+            ## 🎭 Playwright Test Results
+
+            **📊 Latest Report**: ${{ steps.deployment.outputs.page_url }}
+            **📚 Test History**: ${{ steps.deployment.outputs.page_url }}history/
+            **🏗️ Build ID**: ${process.env.BUILD_ID}
+            **🌐 Browsers Tested**: Chromium, Firefox, WebKit
+
+            ---
+            *Reports are organized by browser and maintained with full history for easy debugging.*
+            `
             })
 
   notify-on-failure:
