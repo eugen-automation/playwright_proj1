@@ -49,7 +49,7 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test --project=${{ matrix.browser }} --reporter=blob
         env:
-          PLAYWRIGHT_TEST_BASE_URL: https://demowebshop.tricentis.com
+          HOME: /root
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
