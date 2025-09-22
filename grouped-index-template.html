@@ -38,6 +38,8 @@
         .btn:hover { background: #1d4ed8; }
         .btn-secondary { background: #6b7280; }
         .btn-secondary:hover { background: #4b5563; }
+        .btn-small { padding: 4px 8px; font-size: 12px; margin-left: 10px; }
+        .btn-small:hover { background: #1d4ed8; }
     </style>
 </head>
 <body>
@@ -80,7 +82,7 @@
     <div id="by-browser" class="tab-content active">
         <div class="browser-group">
             <div class="browser-header">
-                <h2>🌐 Chromium Results</h2>
+                <h2>🌐 Chromium Results <a href="original-index.html" class="btn btn-small" style="font-size: 12px; padding: 4px 8px; margin-left: 10px;">📄 Details</a></h2>
             </div>
             <div id="chromium-tests">
                 <p>Loading Chromium test results...</p>
@@ -89,7 +91,7 @@
         
         <div class="browser-group">
             <div class="browser-header">
-                <h2>🦊 Firefox Results</h2>
+                <h2>🦊 Firefox Results <a href="original-index.html" class="btn btn-small" style="font-size: 12px; padding: 4px 8px; margin-left: 10px;">📄 Details</a></h2>
             </div>
             <div id="firefox-tests">
                 <p>Loading Firefox test results...</p>
@@ -98,7 +100,7 @@
         
         <div class="browser-group">
             <div class="browser-header">
-                <h2>🧭 WebKit Results</h2>
+                <h2>🧭 WebKit Results <a href="original-index.html" class="btn btn-small" style="font-size: 12px; padding: 4px 8px; margin-left: 10px;">📄 Details</a></h2>
             </div>
             <div id="webkit-tests">
                 <p>Loading WebKit test results...</p>
@@ -150,13 +152,7 @@
         </div>
     </div>
     
-    <div class="links">
-        <h3>🌐 Browser-Specific Results:</h3>
-        <a href="#" class="btn" onclick="showBrowserOnly('chromium')">🌐 Chromium Results</a>
-        <a href="#" class="btn" onclick="showBrowserOnly('firefox')">🦊 Firefox Results</a>
-        <a href="#" class="btn" onclick="showBrowserOnly('webkit')">🧭 WebKit Results</a>
-        <a href="#" class="btn btn-secondary" onclick="showAllBrowsers()">📊 Show All Browsers</a>
-    </div>
+
     
     <script>
         function showTab(tabName) {
@@ -165,53 +161,6 @@
             
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
-        }
-        
-        function showBrowserOnly(browserName) {
-            // Switch to "By Browser" tab
-            showTabProgrammatically('by-browser');
-            
-            // Hide all browser groups
-            document.querySelectorAll('.browser-group').forEach(group => {
-                group.style.display = 'none';
-            });
-            
-            // Show only the selected browser
-            const browserMap = {
-                'chromium': 0,
-                'firefox': 1, 
-                'webkit': 2
-            };
-            
-            const browserIndex = browserMap[browserName];
-            if (browserIndex !== undefined) {
-                const browserGroups = document.querySelectorAll('.browser-group');
-                if (browserGroups[browserIndex]) {
-                    browserGroups[browserIndex].style.display = 'block';
-                }
-            }
-        }
-        
-        function showAllBrowsers() {
-            // Switch to "By Browser" tab
-            showTabProgrammatically('by-browser');
-            
-            // Show all browser groups
-            document.querySelectorAll('.browser-group').forEach(group => {
-                group.style.display = 'block';
-            });
-        }
-        
-        function showTabProgrammatically(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-            
-            document.getElementById(tabName).classList.add('active');
-            // Find and activate the corresponding nav tab
-            const tabs = document.querySelectorAll('.nav-tab');
-            if (tabName === 'by-browser') tabs[0].classList.add('active');
-            else if (tabName === 'by-suite') tabs[1].classList.add('active');
-            else if (tabName === 'overview') tabs[2].classList.add('active');
         }
         
         document.addEventListener('DOMContentLoaded', function() {
@@ -241,6 +190,29 @@
                 {name: 'Registration flow', status: 'failed'},
                 {name: 'Shopping cart', status: 'passed'}
             ]);
+            
+            // Populate test suite data
+            populateTestSuite('auth-tests', [
+                {name: 'Login with valid credentials', status: 'passed', browser: 'Chromium'},
+                {name: 'Login with invalid credentials', status: 'passed', browser: 'Firefox'},
+                {name: 'Logout functionality', status: 'passed', browser: 'WebKit'},
+                {name: 'Registration with valid data', status: 'passed', browser: 'Chromium'},
+                {name: 'Registration validation', status: 'failed', browser: 'WebKit'}
+            ]);
+            
+            populateTestSuite('smoke-tests', [
+                {name: 'Homepage loads correctly', status: 'passed', browser: 'Chromium'},
+                {name: 'Navigation menu works', status: 'passed', browser: 'Firefox'},
+                {name: 'Search functionality', status: 'passed', browser: 'WebKit'},
+                {name: 'Contact form submission', status: 'passed', browser: 'Chromium'}
+            ]);
+            
+            populateTestSuite('integration-tests', [
+                {name: 'API endpoint connectivity', status: 'passed', browser: 'Chromium'},
+                {name: 'Database operations', status: 'passed', browser: 'Firefox'},
+                {name: 'Third-party service integration', status: 'failed', browser: 'WebKit'},
+                {name: 'Payment gateway integration', status: 'passed', browser: 'Chromium'}
+            ]);
         }
         
         function populateBrowserTests(browser, tests) {
@@ -253,6 +225,24 @@
                 testDiv.innerHTML = `
                     <span>${test.name}</span>
                     <span class="status-badge badge-${test.status}">${test.status.toUpperCase()}</span>
+                `;
+                container.appendChild(testDiv);
+            });
+        }
+        
+        function populateTestSuite(suiteId, tests) {
+            const container = document.getElementById(suiteId);
+            container.innerHTML = '';
+            
+            tests.forEach(test => {
+                const testDiv = document.createElement('div');
+                testDiv.className = `test-item test-${test.status}`;
+                testDiv.innerHTML = `
+                    <span>${test.name}</span>
+                    <div>
+                        <span style="font-size: 12px; color: #6b7280; margin-right: 8px;">${test.browser}</span>
+                        <span class="status-badge badge-${test.status}">${test.status.toUpperCase()}</span>
+                    </div>
                 `;
                 container.appendChild(testDiv);
             });
